@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Toggle Sidebar - OpenAI Chat",
-    "version": "1.0",
+    "version": "1.1",
     "description": "Toggle the sidebar with historical conversations in OpenAI Chat.",
     "action": {
       "default_popup": "popup.html",
