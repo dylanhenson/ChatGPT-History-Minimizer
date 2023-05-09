@@ -1,5 +1,6 @@
 const toggleButton = document.createElement("button");
 toggleButton.textContent = "☰";
+toggleButton.title = "Show/Hide History";
 toggleButton.style.position = "fixed";
 toggleButton.style.top = "9px";
 toggleButton.style.left = "9px";
@@ -12,6 +13,7 @@ toggleButton.style.color = "white";
 toggleButton.addEventListener("click", toggleSidebar);
 document.body.appendChild(toggleButton);
 
+
 console.log("Toggle Button:", toggleButton);
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -22,6 +24,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 let isSidebarHidden = false;
 let observer;
+
+function hideSidebarOnLoad() {
+  const elements = Array.from(document.querySelectorAll("*")).filter(
+    (el) => el.style.width === "260px" || el.style.width === "0px"
+  );
+
+  elements.forEach((element) => {
+    element.style.width = "0px";
+  });
+}
 
 function toggleSidebar() {
   const elements = Array.from(document.querySelectorAll("*")).filter(
