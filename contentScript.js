@@ -1,3 +1,23 @@
+let isSidebarHidden = true;
+let observer;
+
+function startObserving() {
+  observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      const elements = Array.from(document.querySelectorAll(".dark.flex-shrink-0.overflow-x-hidden.bg-gray-900"));
+      elements.forEach((element) => {
+        if (isSidebarHidden && element.style.display !== "none") {
+          element.style.display = "none";
+        }
+      });
+    });
+  });
+
+  const config = { attributes: true, childList: true, subtree: true };
+  const targetNode = document.querySelector("body");
+  observer.observe(targetNode, config);
+}
+
 const toggleButton = document.createElement("button");
 toggleButton.textContent = "☰";
 toggleButton.title = "Show/Hide History";
@@ -8,11 +28,10 @@ toggleButton.style.zIndex = "10000";
 toggleButton.style.cursor = "pointer";
 toggleButton.style.padding = "10px";
 toggleButton.style.borderRadius = "4px";
-toggleButton.style.backgroundColor = "#2F4F4F";
+toggleButton.style.backgroundColor = "#0f876a";
 toggleButton.style.color = "white";
 toggleButton.addEventListener("click", toggleSidebar);
 document.body.appendChild(toggleButton);
-
 
 console.log("Toggle Button:", toggleButton);
 
@@ -22,53 +41,18 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     toggleSidebar();
   }
 });
-let isSidebarHidden = false;
-let observer;
-
-function hideSidebarOnLoad() {
-  const elements = Array.from(document.querySelectorAll("*")).filter(
-    (el) => el.style.width === "260px" || el.style.width === "0px"
-  );
-
-  elements.forEach((element) => {
-    element.style.width = "0px";
-  });
-}
 
 function toggleSidebar() {
-  const elements = Array.from(document.querySelectorAll("*")).filter(
-    (el) => el.style.width === "260px" || el.style.width === "0px"
-  );
-  console.log("Elements:", elements);
+  const elements = Array.from(document.querySelectorAll(".dark.flex-shrink-0.overflow-x-hidden.bg-gray-900"));
 
   elements.forEach((element) => {
-    if (element.style.width === "260px") {
-      element.style.width = "0px";
-    } else {
-      element.style.width = "260px";
-    }
+    element.style.display = isSidebarHidden ? "flex" : "none";
   });
 
   isSidebarHidden = !isSidebarHidden;
 
-  if (isSidebarHidden) {
-    observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        const elements = Array.from(document.querySelectorAll("*")).filter(
-          (el) => el.style.width === "260px" || el.style.width === "0px"
-        );
-
-        elements.forEach((element) => {
-          if (isSidebarHidden && element.style.width === "260px") {
-            element.style.width = "0px";
-          }
-        });
-      });
-    });
-
-    const config = { attributes: true, childList: true, subtree: true };
-    const targetNode = document.querySelector("body");
-    observer.observe(targetNode, config);
+  if (!isSidebarHidden) {
+    startObserving();
   } else {
     if (observer) {
       observer.disconnect();

@@ -20,7 +20,8 @@
         "https://chat.openai.com/*"
       ],
       "css": [
-        "style.css"
+        "style.css",
+        "hide-sidebar.css"
       ],
       "js": [
         "contentScript.js"
